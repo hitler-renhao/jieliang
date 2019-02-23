@@ -1,0 +1,18 @@
+C端
+登录 ----- Login
+会员中心 ----- Vipcenter
+验光数据列表 ----- OptometryList
+历史验光 ----- OptometryHistory
+验光数据详情 ----- OptometryDetail
+积分明细 ----- PointsDetail
+个人资料 ----- Personal
+
+
+B端
+登录 ----- Login
+首页 ----- Home
+客户详情 ----- ClientDetail
+消费详情 ----- ConsumeDetail
+录入客户 ----- EnteringClient
+录入验光单 ----- EnteringOptometry
+录入消费 ----- EnteringConsume
