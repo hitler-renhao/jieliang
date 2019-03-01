@@ -9,7 +9,7 @@ import OptometryHistory from '@/components/OptometryHistory'
 import OptometryDetail from '@/components/OptometryDetail'
 import PointsDetail from '@/components/PointsDetail'
 import Personal from '@/components/Personal'
-import Error from '@/components/404'
+// import Error from '@/components/404'
 
 Vue.use(Router)
 
@@ -24,6 +24,6 @@ export default new Router({
     { path: '/OptometryDetail', name: 'OptometryDetail', component: OptometryDetail },
     { path: '/PointsDetail', name: 'PointsDetail', component: PointsDetail },
     { path: '/Personal', name: 'Personal', component: Personal },
-    { path: '*', name: 'Error', component: Error, hidden: true }
+    // { path: '*', name: 'Error', component: Error, hidden: true }
   ]
 })

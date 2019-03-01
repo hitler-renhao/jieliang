@@ -1,5 +1,6 @@
 <template>
   <div class="VipCenter">
+    <title>会员中心</title>
     <div class="top"></div>
     <ul class="banner">
       <li @click="myOptometrist">
@@ -34,30 +35,42 @@
     name: 'VipCenter',
     data() {
       return {
-        dialog: false,    // 弹出框
+        dialog: false, // 弹出框
       }
     },
     methods: {
       myOptometrist() {
-        alert('我的验光');
-        this.$router.push({ path: '/OptometryHistory'})
+        this.hasLogin('/OptometryHistory')
       },
       myPoints() {
-        alert('我的积分')
+        this.hasLogin('/PointsDetail')
       },
       myInformation() {
-        alert('我的资料')
+        this.hasLogin('/Personal')
       },
-      verify () {
-        alert('立即验证')
+      verify() {
+        this.$router.push({
+          path: '/Login',
+          query: {
+            path: 'VipCenter'
+          }
+        })
       },
-      cancel () {
+      cancel() {
         this.dialog = false;
+      },
+      hasLogin(path) {
+        let token = localStorage.getItem('token')
+        if (!token) {
+          this.dialog = true; // 测试
+        } else {
+          this.$router.push({
+            path: path
+          })
+        }
       }
     },
-    created() {
-      this.dialog = false;   // 测试
-    },
+    created() {},
   }
 
 </script>
@@ -70,16 +83,16 @@
   }
 
   .top {
-    height: 35vh;
+    height: 40vh;
     background: url(../assets/img/vipcenter-banner.png) no-repeat;
-    background-size: 97%;
+    background-size: 97% 40vh;
   }
 
   .banner {
     width: 93%;
     height: 30vh;
     padding: 0 2vh;
-    margin-top: 5vh;
+    /* margin-top: 5vh; */
     display: flex;
     justify-content: space-between;
   }
@@ -87,10 +100,12 @@
   li {
     float: left;
     list-style: none;
-    width: 30%;
+    width: 32%;
     height: 12.6vh;
-    background: url(../assets/img/vipcenter-bg.png);
+    background-color: #fff;
+    border-radius: 10px;
     text-align: center;
+    box-shadow: 0px 10px 10px -7px rgba(0, 0, 0, 0.1);
   }
 
   img {
@@ -145,7 +160,7 @@
     width: 80%;
     height: 6vh;
     margin-top: 2vh;
-    background: linear-gradient(to right, #ECC974 , #FEE89F);
+    background: linear-gradient(to right, #ECC974, #FEE89F);
     border: none;
     border-radius: 21px;
     color: #fff;

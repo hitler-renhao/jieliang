@@ -1,5 +1,6 @@
 <template>
   <div class="PointsDetail">
+    <title>积分明细</title>
     <div class="banner">
       <p>您当前拥有积分:</p>
       <h2> {{ points }} </h2>
@@ -28,20 +29,65 @@
       }
     },
     created() {
-      this.points = '89898898'
-      this.data = [{
-          from: '进店消费',
-          time: '2018年12月11日',
-          count: '+100000'
-        },{
-          from: '进店消费',
-          time: '2018年12月11日',
-          count: '+100001'
-        },{
-          from: '进店消费',
-          time: '2018年12月11日',
-          count: '+100002'
-        }]
+      this.getPoint();
+      this.getPointDetail()
+    },
+    methods: {
+      getPoint() {
+        this.http.get('/api/member/point/' + 1)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.points = res.data.data.point
+            } else if (res.data.code == 400) {
+              alert(res.data.message)
+            } else if (res.data.code == 401) {
+            alert('您还未登录!');
+            this.$router.push({
+                path: '/Login',
+                query: {
+                  path: 'PointsDetail'
+                }
+              })
+          }
+          })
+      },
+      getPointDetail() {
+        this.http.get('/api/member/point/', {
+            offset: 1,
+            size: 10000,
+            memberAccountId: localStorage.getItem('userId')
+          })
+          .then(res => {
+            if (res.data.code == 200) {
+              console.log(res.data.data);
+              var data = res.data.data
+              var obj = {};
+              var from, time, count;
+              for (var index = 0; index < data.length; index++) {
+                obj.from = data[index].updateReason
+                obj.count = data[index].updatedMemberPoint
+                obj.time = this.changeTimes(data[index].gmtCreate)
+                this.data.push(obj)
+              }
+            } else if (res.data.code == 400) {
+              alert(res.data.message)
+            } else if (res.data.code == 401) {
+            alert('您还未登录!');
+            this.$router.push({
+                path: '/Login',
+                query: {
+                  path: 'PointsDetail'
+                }
+              })
+          }
+          })
+      },
+      // 时间转换函数
+      changeTimes (times) {
+        let time = times.split(' ')[0];
+        // alert(times)
+        return time.split('-')[0] + '年' + time.split('-')[1] + '月' + time.split('-')[2] + '日'
+      }
     },
   }
 
@@ -83,27 +129,32 @@
     margin-top: 2vh;
     padding: 0 2vh;
   }
+
   aside {
     color: #ECC974;
     font-size: 14px;
     line-height: 44px;
     border-bottom: 1px solid #f2f2f2;
   }
+
   li {
     position: relative;
     border-bottom: 1px solid #f2f2f2;
     padding: 2vh 1vh;
   }
+
   .from {
     font-size: 14px;
     color: #333;
     line-height: 28px;
   }
+
   .time {
     font-size: 12px;
     color: #999;
     line-height: 24px;
   }
+
   .count {
     position: absolute;
     top: 5vh;

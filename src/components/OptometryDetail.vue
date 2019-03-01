@@ -1,10 +1,13 @@
 <template>
   <div class="OptometryDetail">
+    <title>验光数据</title>
     <div class="hasInfo" v-if="info">
       <div class="demand">
         <i></i>
         <span>配镜需求</span>
-        <button class="demands">远用</button>
+        <button class="demands" v-if="type == 1">远用</button>
+        <button class="demands" v-else-if="type == 2">近用</button>
+        <button class="demands" v-else="type == 3">多用</button>
       </div>
       <div class="visualDetails">
         <i></i>
@@ -120,40 +123,104 @@
     name: 'OptometryDetail',
     data() {
       return {
+        type: 3,
         data1: [{
-          amount1: '1',
-          amount2: '2',
-          amount3: '3',
-          amount4: '4',
-          amount5: '5',
-          amount6: '6',
-          amount7: '7',
-          amount8: '8',
-          amount9: '9',
-          amount10: '10',
-          amount11: '11',
-          amount12: '12',
+          amount1: '',
+          amount2: '',
+          amount3: '',
+          amount4: '',
+          amount5: '',
+          amount6: '',
+          amount7: '',
+          amount8: '',
+          amount9: '',
+          amount10: '',
+          amount11: '',
+          amount12: '',
         }],
         data2: [{
-          amount1: '1',
-          amount2: '2',
-          amount3: '3',
+          amount1: '',
+          amount2: '',
+          amount3: '',
         }],
         data3: [{
-          amount1: '1',
-          amount2: '2',
-          amount3: '3',
-          amount4: '4',
+          amount1: '',
+          amount2: '',
+          amount3: '',
+          amount4: '',
         }],
         // 建议
-        suggest: '1、少看电子产品，加强用眼知识；2、定期对眼睛进行各项指标检查；3、眼疲劳时，尽量少使用眼药水；4、去眼科请去正规医院进行治疗，避免病情加重。',
+        suggest: '',
         // 验光师
         optometrist: '贾二蛋',
 
         // 是否有数据
         info: true
       }
-    }
+    },
+    created() {
+
+      this.getInformation();
+    },
+    methods: {
+      getInformation() {
+        this.http.get('/api/optometry/optometryDetail/' + localStorage.getItem('userId'))
+          .then(res => {
+            if (res.data.code == 200) {
+              console.log(res.data.data);
+              let data = res.data.data;
+              // 配镜需求切换
+              this.type = data.use;
+              // 球镜
+              this.data1[0].amount1 = data.sph.split(',')[0];
+              this.data1[0].amount2 = data.sph.split(',')[1];
+              // 柱镜
+              this.data1[0].amount3 = data.cyl.split(',')[0];
+              this.data1[0].amount4 = data.cyl.split(',')[1];
+              // 轴位
+              this.data1[0].amount5 = data.axi.split(',')[0];
+              this.data1[0].amount6 = data.axi.split(',')[1];
+              // 棱镜
+              this.data1[0].amount7 = data.prism.split(',')[0];
+              this.data1[0].amount8 = data.prism.split(',')[1];
+              // 棱镜底
+              this.data1[0].amount9 = data.basePrism.split(',')[0];
+              this.data1[0].amount10 = data.basePrism.split(',')[1];
+              // 矫正视力
+              this.data1[0].amount11 = data.bcva.split(',')[0];
+              this.data1[0].amount12 = data.bcva.split(',')[1];
+              // 瞳高
+              this.data2[0].amount1 = data.pd;
+              // ADD
+              this.data2[0].amount2 = data.add;
+              // 焦距
+              this.data2[0].amount3 = data.focalLength;
+              // RPD
+              this.data3[0].amount1 = data.rpd;
+              // LPD
+              this.data3[0].amount2 = data.lpd;
+              // RPH
+              this.data3[0].amount3 = data.rph;
+              // LPH
+              this.data3[0].amount4 = data.lph;
+              // 建议
+              this.suggest = data.diagnosticAdvice;
+              // 验光师
+              this.optometrist = data.optometrist;
+            } else if (res.data.code == 400) {
+              alert(res.data.message)
+            } else if (res.data.code == 401) {
+            alert('您还未登录!');
+            this.$router.push({
+                path: '/Login',
+                query: {
+                  path: 'OptometryDetail'
+                }
+              })
+          }
+          })
+      }
+    },
   }
 
 </script>
@@ -178,7 +245,7 @@
 
   .demands {
     display: block;
-    margin: 2vh 1vh;
+    margin: 2vh 4vh;
     width: 13.5vh;
     height: 4vh;
     border-radius: 2vh;
@@ -232,6 +299,7 @@
     background: url(../assets/img/OptometryDetail-noinfo.png)50% 30% no-repeat;
     background-size: 60%;
   }
+
   .noInfo p {
     width: 100%;
     position: absolute;
